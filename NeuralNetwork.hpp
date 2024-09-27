@@ -1,8 +1,8 @@
 #ifndef NEURAL_NETWORK_HPP
 #define NEURAL_NETWORK_HPP
 
-#include <vector>
 #include "Layer.hpp"
+#include <vector>
 
 template <typename T>
 class NeuralNetwork
@@ -11,34 +11,80 @@ private:
     std::vector<NeuralNetworkLayer<T>> layers;
 
 public:
-    void addLayer(const NeuralNetworkLayer<T> &layer)
+    NeuralNetwork(const std::vector<size_t> &layer_sizes,
+                  std::function<T(T)> activation_func,
+                  std::function<T(T)> activation_derivative)
     {
-        layers.push_back(layer);
+        if (layer_sizes.size() < 2)
+        {
+            throw std::invalid_argument("The network must have at least two layers (input and output).");
+        }
+
+        for (size_t i = 1; i < layer_sizes.size(); ++i)
+        {
+            layers.emplace_back(layer_sizes[i - 1], layer_sizes[i], activation_func, activation_derivative);
+        }
     }
 
-    std::vector<NeuralNetworkLayer<T>> getLayers() const
+    NeuralNetwork(const std::vector<size_t> &layer_sizes)
     {
-        return layers;
+        if (layer_sizes.size() < 2)
+        {
+            throw std::invalid_argument("The network must have at least two layers (input and output).");
+        }
+
+        for (size_t i = 1; i < layer_sizes.size(); ++i)
+        {
+            layers.emplace_back(layer_sizes[i - 1], layer_sizes[i]);
+        }
     }
 
-    Matrix<T> forward(const Matrix<T> &input_vector)
+    void initializeWeights(std::function<T()> random_func)
     {
-        Matrix<T> output = input_vector;
         for (auto &layer : layers)
+        {
+            layer.initializeWeights(random_func);
+        }
+    }
+
+    Matrix<T> forward(const Matrix<T> &input)
+    {
+        Matrix<T> output = input;
+
+        for (const auto &layer : layers)
         {
             output = layer.forward(output);
         }
+
         return output;
     }
 
-    void printLayers() const
+    void print() const
     {
         for (size_t i = 0; i < layers.size(); ++i)
         {
-            std::cout << "Layer " << i << " Weights:" << std::endl;
+            std::cout << "Layer " << i + 1 << ":\n";
             layers[i].print();
         }
     }
+
+    void setWeights(size_t layer_index, const Matrix<T> &new_weights)
+    {
+        if (layer_index >= layers.size())
+        {
+            throw std::out_of_range("Layer index out of range.");
+        }
+        layers[layer_index].setWeights(new_weights);
+    }
+
+    void setBias(size_t layer_index, const Matrix<T> &new_bias)
+    {
+        if (layer_index >= layers.size())
+        {
+            throw std::out_of_range("Layer index out of range.");
+        }
+        layers[layer_index].setBias(new_bias);
+    }
 };
 
-#endif
+#endif // NEURAL_NETWORK_HPP
