@@ -25,6 +25,11 @@ public:
         return data[index];
     }
 
+    const std::vector<T> &operator[](size_t index) const
+    {
+        return data[index];
+    }
+
     size_t getRows() const { return rows; }
     size_t getCols() const { return cols; }
 

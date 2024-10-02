@@ -65,6 +65,36 @@ public:
         return output;
     }
 
+    void backward(const Matrix<T> &input_vector, const Matrix<T> &output_error, T learning_rate)
+    {
+        if (input_vector.getRows() != 1 || input_vector.getCols() != input_size)
+        {
+            throw std::invalid_argument("Input vector dimensions do not match layer's input size.");
+        }
+        if (output_error.getRows() != 1 || output_error.getCols() != output_size)
+        {
+            throw std::invalid_argument("Output error dimensions do not match layer's output size.");
+        }
+
+        Matrix<T> activation_gradient(1, output_size);
+        for (size_t j = 0; j < output_size; ++j)
+        {
+            activation_gradient[0][j] = activation_derivative(output_error[0][j]);
+        }
+
+        Matrix<T> delta = output_error;
+        for (size_t j = 0; j < output_size; ++j)
+        {
+            delta[0][j] *= activation_gradient[0][j];
+        }
+
+        Matrix<T> weight_gradient = input_vector.transpose() * delta;
+        Matrix<T> bias_gradient = delta;
+
+        weights = weights - (weight_gradient * learning_rate);
+        bias = bias - (bias_gradient * learning_rate);
+    }
+
     void setWeights(const Matrix<T> &new_weights)
     {
         if (new_weights.getRows() != input_size || new_weights.getCols() != output_size)

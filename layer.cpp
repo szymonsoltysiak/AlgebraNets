@@ -50,8 +50,18 @@ int main()
     layer_activation.setWeights(weights);
     layer_activation.setBias(bias);
     Matrix<std::complex<double>> output_activation = layer_activation.forward(input_vector);
+    Matrix<std::complex<double>> gradient(1, 2);
+    gradient[0][0] = std::complex<double>(0.1, 0.0);  // Example gradient
+    gradient[0][1] = std::complex<double>(-0.1, 0.2); // Example gradient
 
     std::cout << "Output with ReLu:" << std::endl;
+    output_activation.print();
+
+    std::complex<double> learning_rate = std::complex<double>(0.1, 0.0); // Example learning rate
+    layer_activation.backward(input_vector, gradient, learning_rate);
+    output_activation = layer_activation.forward(input_vector);
+
+    std::cout << "Output after backrop:" << std::endl;
     output_activation.print();
 
     return 0;
