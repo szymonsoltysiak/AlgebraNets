@@ -38,7 +38,7 @@ int main()
     int input_size = 3;
     int output_size = 2;
 
-    NeuralNetworkLayer<std::complex<double>> layer = NeuralNetworkLayer<std::complex<double>>(input_size, output_size, relu_complex<double>, relu_derivative_complex<double>);
+    NeuralNetworkLayer<std::complex<double>> layer = NeuralNetworkLayer<std::complex<double>>(input_size, output_size);
     layer.initializeWeights([&]()
                             {
     double stddev = sqrt(2.0 / input_size);

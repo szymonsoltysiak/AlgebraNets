@@ -14,12 +14,24 @@ double relu_derivative(double z)
     return (z > 0) ? 1 : 0;
 }
 
+double sigmoid(double x)
+{
+    return 1.0 / (1.0 + exp(-x));
+}
+
+// Function to compute the derivative of the sigmoid function
+double sigmoid_derivative(double x)
+{
+    double s = sigmoid(x);
+    return s * (1.0 - s); // Derivative: s * (1 - s)
+}
+
 // Define a simple function to fit
 Matrix<double> target_function(Matrix<double> input)
 {
     Matrix<double> output(1, 2);
     output[0][0] = input[0][0] + input[0][2]; // Adjusted for real values
-    output[0][1] = input[0][1] * 0.5;         // Adjusted for real values
+    output[0][1] = input[0][1] * 2 + 3;       // Adjusted for real values
     return output;
 }
 
@@ -34,27 +46,30 @@ int main()
     int output_size = 2;
 
     // Initialize the neural network layer with real numbers
-    NeuralNetworkLayer<double> layer = NeuralNetworkLayer<double>(input_size, output_size, relu, relu_derivative);
+    NeuralNetworkLayer<double> layer = NeuralNetworkLayer<double>(input_size, output_size);
     layer.initializeWeights([&]()
                             {
                                 double stddev = sqrt(2.0 / input_size);  // Xavier initialization
                                 return stddev * UniformDist(-1, 1)(gen); // Only real values
                             });
 
+    // layer.print();
+    // std::cout << "-------------------------------------" << std::endl;
+
     // Training loop
-    int epochs = 1000;
-    double learning_rate = 0.01; // Using real double values
+    int epochs = 100;
+    double learning_rate = 0.1; // Using real double values
     double decay_rate = 1.0;
 
     for (int epoch = 0; epoch < epochs; ++epoch)
     {
         double loss = 0.0;
-        for (int batch = 0; batch < 100; ++batch)
+        for (int batch = 0; batch < 10; ++batch)
         {
             Matrix<double> input(1, 3); // 1 row, 3 columns
-            input[0][0] = UniformDist(-1, 1)(gen);
-            input[0][1] = UniformDist(-1, 1)(gen);
-            input[0][2] = UniformDist(-1, 1)(gen);
+            input[0][0] = UniformDist(-3, 3)(gen);
+            input[0][1] = UniformDist(-3, 3)(gen);
+            input[0][2] = UniformDist(-3, 3)(gen);
 
             Matrix<double> target = target_function(input);
 
@@ -71,10 +86,10 @@ int main()
 
         // Learning rate decay can be implemented here if needed
         // learning_rate *= decay_rate;
-
-        if (epoch % 100 == 0)
+        // std::cout << "-------------------------------------" << std::endl;
+        if (epoch % 10 == 0)
         {
-            std::cout << "Epoch " << epoch << ", Loss: " << loss / 100 << std::endl;
+            std::cout << "Epoch " << epoch << ", Loss: " << loss / 10 << std::endl;
         }
     }
 
