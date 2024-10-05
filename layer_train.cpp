@@ -65,7 +65,7 @@ int main()
             Matrix<std::complex<double>> output = layer.forward(input);
 
             // Compute loss (mean squared error)
-            Matrix<std::complex<double>> error = target - output;
+            Matrix<std::complex<double>> error = output - target;
             loss += std::norm(error[0][0]) + std::norm(error[0][1]);
 
             layer.backward(input, error, learning_rate);

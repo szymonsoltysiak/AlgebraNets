@@ -77,7 +77,7 @@ int main()
             Matrix<double> output = layer.forward(input);
 
             // Compute loss (mean squared error)
-            Matrix<double> error = target - output;
+            Matrix<double> error = output - target;
             loss += std::pow(error[0][0], 2) + std::pow(error[0][1], 2); // Squared error
 
             Matrix<double> input_error(1, input_size); // Create a Matrix to hold the input error

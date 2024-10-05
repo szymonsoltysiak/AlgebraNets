@@ -98,8 +98,8 @@ public:
             }
         }
 
-        weights = weights - (input_vector.transpose() * delta * learning_rate); // Update weights
-        bias = bias - (delta * learning_rate);                                  // Update biases
+        weights = weights - (input_vector.transpose() * delta * learning_rate);
+        bias = bias - (delta * learning_rate);
     }
 
     void setWeights(const Matrix<T> &new_weights)
