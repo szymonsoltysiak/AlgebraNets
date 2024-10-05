@@ -45,6 +45,32 @@ public:
         }
     }
 
+    Matrix<T> apply_activation_func(const Matrix<T> &vec) const
+    {
+        Matrix<T> output = Matrix<T>(vec.getRows(), vec.getCols());
+        for (size_t i = 0; i < output.getRows(); ++i)
+        {
+            for (size_t j = 0; j < output.getCols(); ++j)
+            {
+                output[i][j] = activation_func(vec[i][j]);
+            }
+        }
+        return output;
+    }
+
+    Matrix<T> apply_activation_derivative(const Matrix<T> &vec) const
+    {
+        Matrix<T> output = Matrix<T>(vec.getRows(), vec.getCols());
+        for (size_t i = 0; i < output.getRows(); ++i)
+        {
+            for (size_t j = 0; j < output.getCols(); ++j)
+            {
+                output[i][j] = activation_derivative(vec[i][j]);
+            }
+        }
+        return output;
+    }
+
     Matrix<T> forward(const Matrix<T> &input_vector) const
     {
         if (input_vector.getRows() != 1 || input_vector.getCols() != input_size)
@@ -54,27 +80,15 @@ public:
         Matrix<T> output = input_vector * weights;
         output = output + bias;
 
-        for (size_t i = 0; i < output.getRows(); ++i)
-        {
-            for (size_t j = 0; j < output.getCols(); ++j)
-            {
-                output[i][j] = activation_func(output[i][j]);
-            }
-        }
+        output = apply_activation_func(output);
 
         return output;
     }
 
     void backward(const Matrix<T> &input_vector, const Matrix<T> &output_error, T learning_rate)
     {
-        // Step 1: Compute the derivative of the activation function for each output element
-        Matrix<T> activation_gradient(1, output_size);
-        for (size_t i = 0; i < output_size; ++i)
-        {
-            activation_gradient[0][i] = activation_derivative(output_error[0][i]);
-        }
+        Matrix<T> activation_gradient = apply_activation_derivative(output_error);
 
-        // Step 2: Multiply the error by the activation function's derivative
         Matrix<T> delta = output_error;
         for (size_t i = 0; i < delta.getRows(); ++i)
         {
@@ -84,13 +98,8 @@ public:
             }
         }
 
-        // Step 3: Compute the gradient w.r.t. weights and biases
-        Matrix<T> weight_gradient = input_vector.transpose() * delta; // Transpose input for proper dimensions
-        Matrix<T> bias_gradient = delta;                              // Bias gradient is just the delta values
-
-        // Step 4: Update the weights and biases using the computed gradients
-        weights = weights - (weight_gradient * learning_rate); // Update weights
-        bias = bias - (bias_gradient * learning_rate);         // Update biases
+        weights = weights - (input_vector.transpose() * delta * learning_rate); // Update weights
+        bias = bias - (delta * learning_rate);                                  // Update biases
     }
 
     void setWeights(const Matrix<T> &new_weights)

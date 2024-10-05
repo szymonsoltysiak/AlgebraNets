@@ -58,7 +58,7 @@ int main()
 
     // Training loop
     int epochs = 100;
-    double learning_rate = 0.01; // Using real double values
+    double learning_rate = 0.1; // Using real double values
     double decay_rate = 1.0;
 
     for (int epoch = 0; epoch < epochs; ++epoch)
