@@ -66,7 +66,7 @@ public:
         {
             for (size_t j = 0; j < cols; ++j)
             {
-                result[i][j] = getByIndex(i, j) - rhs.getByIndex(i, j); // Element-wise subtraction
+                result[i][j] = data[i][j] - rhs.data[i][j]; // Element-wise subtraction
             }
         }
         return result;
@@ -104,6 +104,11 @@ public:
             }
         }
         return result;
+    }
+
+    friend Matrix<T> operator*(const T &scalar, const Matrix<T> &matrix)
+    {
+        return matrix * scalar;
     }
 
     Matrix<T> transpose() const

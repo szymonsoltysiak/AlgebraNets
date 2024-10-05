@@ -58,7 +58,7 @@ int main()
 
     // Training loop
     int epochs = 100;
-    double learning_rate = 0.1; // Using real double values
+    double learning_rate = 0.01; // Using real double values
     double decay_rate = 1.0;
 
     for (int epoch = 0; epoch < epochs; ++epoch)
@@ -67,9 +67,9 @@ int main()
         for (int batch = 0; batch < 10; ++batch)
         {
             Matrix<double> input(1, 3); // 1 row, 3 columns
-            input[0][0] = UniformDist(-3, 3)(gen);
-            input[0][1] = UniformDist(-3, 3)(gen);
-            input[0][2] = UniformDist(-3, 3)(gen);
+            input[0][0] = UniformDist(-1, 1)(gen);
+            input[0][1] = UniformDist(-1, 1)(gen);
+            input[0][2] = UniformDist(-1, 1)(gen);
 
             Matrix<double> target = target_function(input);
 
@@ -80,8 +80,8 @@ int main()
             Matrix<double> error = target - output;
             loss += std::pow(error[0][0], 2) + std::pow(error[0][1], 2); // Squared error
 
-            // Backward pass
-            layer.backward(input, output, error, learning_rate);
+            Matrix<double> input_error(1, input_size); // Create a Matrix to hold the input error
+            layer.backward(input, error, learning_rate);
         }
 
         // Learning rate decay can be implemented here if needed

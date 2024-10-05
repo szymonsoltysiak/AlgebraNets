@@ -65,25 +65,32 @@ public:
         return output;
     }
 
-    void backward(const Matrix<T> &input_vector, const Matrix<T> &output, const Matrix<T> &output_error, T learning_rate)
+    void backward(const Matrix<T> &input_vector, const Matrix<T> &output_error, T learning_rate)
     {
-        if (input_vector.getRows() != 1 || input_vector.getCols() != input_size)
+        // Step 1: Compute the derivative of the activation function for each output element
+        Matrix<T> activation_gradient(1, output_size);
+        for (size_t i = 0; i < output_size; ++i)
         {
-            throw std::invalid_argument("Input vector dimensions do not match layer's input size.");
-        }
-        if (output_error.getRows() != 1 || output_error.getCols() != output_size)
-        {
-            throw std::invalid_argument("Output error dimensions do not match layer's output size.");
+            activation_gradient[0][i] = activation_derivative(output_error[0][i]);
         }
 
-        Matrix<T> correction(1, output_size);
-        for (size_t j = 0; j < output_size; ++j)
+        // Step 2: Multiply the error by the activation function's derivative
+        Matrix<T> delta = output_error;
+        for (size_t i = 0; i < delta.getRows(); ++i)
         {
-            correction[0][j] = output_error[0][j] * activation_derivative(output[0][j]);
+            for (size_t j = 0; j < delta.getCols(); ++j)
+            {
+                delta[i][j] *= activation_gradient[0][j];
+            }
         }
 
-        weights = weights + (input_vector.transpose() * correction) * learning_rate;
-        bias = bias + correction * learning_rate;
+        // Step 3: Compute the gradient w.r.t. weights and biases
+        Matrix<T> weight_gradient = input_vector.transpose() * delta; // Transpose input for proper dimensions
+        Matrix<T> bias_gradient = delta;                              // Bias gradient is just the delta values
+
+        // Step 4: Update the weights and biases using the computed gradients
+        weights = weights - (weight_gradient * learning_rate); // Update weights
+        bias = bias - (bias_gradient * learning_rate);         // Update biases
     }
 
     void setWeights(const Matrix<T> &new_weights)

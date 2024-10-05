@@ -68,7 +68,7 @@ int main()
             Matrix<std::complex<double>> error = target - output;
             loss += std::norm(error[0][0]) + std::norm(error[0][1]);
 
-            layer.backward(input, output, error, learning_rate);
+            layer.backward(input, error, learning_rate);
         }
         learning_rate = learning_rate * decay_rate;
         if (epoch % 100 == 0)
