@@ -1,4 +1,4 @@
-#include "Matrix.hpp"
+#include "../generic/Matrix.hpp"
 #include <complex>
 
 int main()

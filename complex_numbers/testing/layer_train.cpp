@@ -1,25 +1,8 @@
 #include <iostream>
 #include <complex>
 #include <random>
-#include "Layer.hpp"
+#include "../../generic/Layer.hpp"
 
-template <typename T>
-std::complex<T> relu_complex(std::complex<T> z)
-{
-    T real_part = std::max(T(0), std::real(z));
-    T imag_part = std::max(T(0), std::imag(z));
-    return std::complex<T>(real_part, imag_part);
-}
-
-template <typename T>
-std::complex<T> relu_derivative_complex(std::complex<T> z)
-{
-    T real_part = (std::real(z) > 0) ? 1 : 0;
-    T imag_part = (std::real(z) > 0) ? 1 : 0;
-    return std::complex<T>(real_part, imag_part);
-}
-
-// Define a simple function to fit
 Matrix<std::complex<double>> target_function(Matrix<std::complex<double>> input)
 {
     Matrix<std::complex<double>> output(1, 2);
@@ -44,7 +27,6 @@ int main()
     double stddev = sqrt(2.0 / input_size);
     return std::complex<double>(stddev * UniformDist(-1, 1)(gen), stddev * UniformDist(-1, 1)(gen)); });
 
-    // Training loop
     int epochs = 1000;
     std::complex<double> learning_rate = std::complex<double>(0.1, 0.0);
     double decay_rate = 1;
@@ -61,10 +43,8 @@ int main()
 
             Matrix<std::complex<double>> target = target_function(input);
 
-            // Forward pass
             Matrix<std::complex<double>> output = layer.forward(input);
 
-            // Compute loss (mean squared error)
             Matrix<std::complex<double>> error = output - target;
             loss += std::norm(error[0][0]) + std::norm(error[0][1]);
 

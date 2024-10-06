@@ -1,4 +1,5 @@
-layer
-matrix
-neural_network
+/real_numbers/testing/layer_train
+/testing/layer
+/testing/matrix
+/testing/neural_network
 /.vscode/

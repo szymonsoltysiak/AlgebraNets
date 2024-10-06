@@ -1,4 +1,4 @@
-#include "NeuralNetwork.hpp"
+#include "../generic/NeuralNetwork.hpp"
 #include <iostream>
 #include <random>
 #include <complex>

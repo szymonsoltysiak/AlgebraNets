@@ -7,15 +7,15 @@
 template <typename T>
 class NeuralNetworkLayer
 {
-private:
-    Matrix<T> weights;
+public:
+    Matrix<T>
+        weights;
     Matrix<T> bias;
     size_t input_size;
     size_t output_size;
     std::function<T(T)> activation_func;
     std::function<T(T)> activation_derivative;
 
-public:
     NeuralNetworkLayer(size_t input_size, size_t output_size)
         : input_size(input_size), output_size(output_size),
           weights(input_size, output_size), bias(1, output_size),

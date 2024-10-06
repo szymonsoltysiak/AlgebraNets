@@ -1,6 +1,6 @@
 #include <iostream>
 #include <complex>
-#include "Layer.hpp"
+#include "../generic/Layer.hpp"
 
 template <typename T>
 std::complex<T> relu_complex(std::complex<T> z)
